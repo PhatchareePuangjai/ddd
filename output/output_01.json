@@ -1,0 +1,162 @@
+{
+    "boundedContext": "การสั่งซื้อและการจัดส่ง (Ordering & Shipping)",
+    "aggregates": [
+        {
+            "root": "Order",
+            "description": "เป็นศูนย์กลางของกระบวนการสั่งซื้อทั้งหมด",
+            "entities": [
+                "OrderItem"
+            ],
+            "properties": [
+                {
+                    "name": "orderId",
+                    "type": "String"
+                },
+                {
+                    "name": "customerId",
+                    "type": "String"
+                },
+                {
+                    "name": "orderItems",
+                    "type": "List<OrderItem>"
+                },
+                {
+                    "name": "shippingAddress",
+                    "type": "Address"
+                },
+                {
+                    "name": "rawTotalPrice",
+                    "type": "Decimal"
+                },
+                {
+                    "name": "discount",
+                    "type": "Decimal"
+                },
+                {
+                    "name": "netTotalPrice",
+                    "type": "Decimal"
+                },
+                {
+                    "name": "shippingFee",
+                    "type": "Decimal"
+                },
+                {
+                    "name": "orderStatus",
+                    "type": "String"
+                }
+            ]
+        }
+    ],
+    "entities": [
+        {
+            "name": "Customer",
+            "properties": [
+                {
+                    "name": "customerId",
+                    "type": "String"
+                },
+                {
+                    "name": "name",
+                    "type": "String"
+                },
+                {
+                    "name": "customerType",
+                    "type": "String",
+                    "enum": [
+                        "ทั่วไป",
+                        "VIP"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Product",
+            "properties": [
+                {
+                    "name": "productId",
+                    "type": "String"
+                },
+                {
+                    "name": "name",
+                    "type": "String"
+                },
+                {
+                    "name": "stockQuantity",
+                    "type": "Integer"
+                }
+            ]
+        }
+    ],
+    "valueObjects": [
+        {
+            "name": "OrderItem",
+            "properties": [
+                {
+                    "name": "productId",
+                    "type": "String"
+                },
+                {
+                    "name": "productName",
+                    "type": "String"
+                },
+                {
+                    "name": "quantity",
+                    "type": "Integer"
+                },
+                {
+                    "name": "unitPrice",
+                    "type": "Decimal"
+                }
+            ]
+        },
+        {
+            "name": "Address",
+            "properties": [
+                {
+                    "name": "street",
+                    "type": "String"
+                },
+                {
+                    "name": "city",
+                    "type": "String"
+                },
+                {
+                    "name": "postalCode",
+                    "type": "String"
+                }
+            ]
+        }
+    ],
+    "businessRules": [
+        {
+            "ruleId": "SHIP-001",
+            "description": "คำนวณค่าจัดส่งสำหรับลูกค้าทั่วไปที่ยอดซื้อไม่ถึง 500 บาท",
+            "condition": "customer.customerType == 'ทั่วไป' AND order.rawTotalPrice < 500",
+            "action": "order.shippingFee = 40"
+        },
+        {
+            "ruleId": "SHIP-002",
+            "description": "ยกเว้นค่าจัดส่งสำหรับลูกค้าทั่วไปที่ยอดซื้อถึง 500 บาท",
+            "condition": "customer.customerType == 'ทั่วไป' AND order.rawTotalPrice >= 500",
+            "action": "order.shippingFee = 0"
+        },
+        {
+            "ruleId": "DISC-001",
+            "description": "ให้ส่วนลด 10% สำหรับลูกค้า VIP",
+            "condition": "customer.customerType == 'VIP'",
+            "action": "order.discount = order.rawTotalPrice * 0.10"
+        },
+        {
+            "ruleId": "SHIP-003",
+            "description": "ยกเว้นค่าจัดส่งสำหรับลูกค้า VIP เสมอ",
+            "condition": "customer.customerType == 'VIP'",
+            "action": "order.shippingFee = 0"
+        },
+        {
+            "ruleId": "STOCK-001",
+            "description": "ตรวจสอบสต็อกสินค้าก่อนยืนยันคำสั่งซื้อ",
+            "trigger": "Before order confirmation",
+            "action": "CHECK product.stockQuantity FOR EACH order.orderItems"
+        }
+    ]
+}
