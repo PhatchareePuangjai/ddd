@@ -1,0 +1,63 @@
+{
+    "boundedContext": "การสั่งซื้อและการจัดส่ง (Ordering & Shipping)",
+    "aggregates": [
+        {
+            "root": "Order",
+            "description": "เป็นศูนย์กลางของกระบวนการสั่งซื้อสินค้าทั้งหมด",
+            "entities": [
+                "OrderItem"
+            ],
+            "properties": [
+                {
+                    "name": "orderId",
+                    "type": "String"
+                },
+                {
+                    "name": "customerId",
+                    "type": "String"
+                },
+                {
+                    "name": "shippingAddress",
+                    "type": "Address"
+                },
+                {
+                    "name": "totalPrice",
+                    "type": "Decimal"
+                }
+            ]
+        }
+    ],
+    "entities": [
+        {
+            "name": "Customer",
+            "properties": [
+                {
+                    "name": "customerId",
+                    "type": "String"
+                },
+                {
+                    "name": "customerType",
+                    "type": "String",
+                    "enum": [
+                        "ทั่วไป",
+                        "VIP"
+                    ]
+                }
+            ]
+        }
+    ],
+    "businessRules": [
+        {
+            "ruleId": "SHIP-001",
+            "description": "คำนวณค่าจัดส่งสำหรับลูกค้าทั่วไปที่ยอดซื้อไม่ถึง 500 บาท",
+            "condition": "customer.customerType == 'ทั่วไป' AND order.totalPrice < 500",
+            "action": "order.shippingFee = 40"
+        },
+        {
+            "ruleId": "DISC-001",
+            "description": "ให้ส่วนลด 10% และส่งฟรีสำหรับลูกค้า VIP",
+            "condition": "customer.customerType == 'VIP'",
+            "action": "order.discount = order.totalPrice * 0.10; order.shippingFee = 0"
+        }
+    ]
+}
