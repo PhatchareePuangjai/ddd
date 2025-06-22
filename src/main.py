@@ -20,6 +20,7 @@ import json
 import os
 import time
 import argparse
+import sys
 
 
 def read_text_file(file_path: str) -> str:
@@ -48,7 +49,10 @@ def analyze_with_llm_mock(requirement_text: str) -> dict:
     """
     *** ฟังก์ชันจำลอง (Mock Function) ***
     ฟังก์ชันนี้จำลองการส่งข้อความไปให้ LLM วิเคราะห์และรอรับผลลัพธ์
-    ในอนาคต ส่วนนี้จะถูกแทนที่ด้วยการเรียกใช้ API ของ LLM จริง
+    ในอนาคต ควรนำเข้าจาก module ที่พัฒนาใน Jupyter Notebook
+    
+    ดูการพัฒนาและทดสอบเพิ่มเติมได้ที่:
+    notebooks/llm_model_development.ipynb
     """
     print("[INFO] กำลังส่งข้อมูลเพื่อวิเคราะห์ด้วย LLM (จำลอง)...")
     # จำลองดีเลย์ เหมือนกำลังรอผลจาก LLM
