@@ -50,7 +50,7 @@ def analyze_with_llm_mock(requirement_text: str) -> dict:
     *** ฟังก์ชันจำลอง (Mock Function) ***
     ฟังก์ชันนี้จำลองการส่งข้อความไปให้ LLM วิเคราะห์และรอรับผลลัพธ์
     ในอนาคต ควรนำเข้าจาก module ที่พัฒนาใน Jupyter Notebook
-    
+
     ดูการพัฒนาและทดสอบเพิ่มเติมได้ที่:
     notebooks/llm_model_development.ipynb
     """
